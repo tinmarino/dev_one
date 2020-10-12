@@ -2,7 +2,12 @@
 Brief: File Driver to create a devince /dev/one like the /dev/zero
 Source: Greatly copyed from: https://www.apriorit.com/dev-blog/195-simple-driver-for-linux-os
 Author: Created by Tinmarino 2020-10-12
-License: Open Source
+License: GPL => Open Source
+
+Build:
+  1/ make              # Compile
+  2/ sudo make load    # Load
+  3/ sudo make device  # Create /dev/one
 */
 
 #include <linux/init.h>
@@ -19,29 +24,32 @@ static const char    g_s_Hello_World_string[] = "Hello world from kernel mode!\n
 static const ssize_t g_s_Hello_World_size = sizeof(g_s_Hello_World_string);
 
 static ssize_t device_file_read(
-                        struct file *file_ptr
-                       , char __user *user_buffer
-                       , size_t count
-                       , loff_t *position) {
-    printk( KERN_NOTICE "One: Device file is read at offset = %i, read bytes count = %u\n"
-                , (int)*position
-                , (unsigned int)count );
-    /* If position is behind the end of a file we have nothing to read */
-    if( *position >= g_s_Hello_World_size ){ return 0; }
-    /* If a user tries to read more than we have, read only as many bytes as we have */
-    if( *position + count > g_s_Hello_World_size )
-        count = g_s_Hello_World_size - *position;
-    if( copy_to_user(user_buffer, g_s_Hello_World_string + *position, count) != 0 )
-        return -EFAULT;    
-    /* Move reading position */
-    *position += count;
+        struct file *file_ptr,
+        char __user *user_buffer,
+        size_t count,
+        loff_t *position) {
+    printk( KERN_NOTICE "One: Device file is read at offset = %i, read bytes count = %u\n" , (int)*position , (unsigned int)count );
+
+    // Allocate Kernel buffer
+    char* ptr = (char*) vmalloc(count);
+
+    // Fill it with one, byte per byte
+    // -- Note that byte is the smallest accesible data unit
+    for (size_t i = 0; i < count; i++) {
+        ptr[i] = 0xFF;
+    }
+
+    char res = copy_to_user(user_buffer, ptr, count);
+    if (res != 0){ return -EFAULT; }
+
+    // Return number of byte read
     return count;
 }
 
 static struct file_operations simple_driver_fops = {
     .owner   = THIS_MODULE,
     .read    = device_file_read,
-};
+}
 
 int register_device(void) {
     int result = 0;
@@ -74,5 +82,6 @@ static void my_exit(void) {
     return;
 }
     
+// Declare register and unregister command
 module_init(my_init);
 module_exit(my_exit);
