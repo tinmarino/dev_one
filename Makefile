@@ -24,7 +24,6 @@ key:
 	echo "\e[31;1mNow you must: 1/ reboot, 2/ Select Unroll MOK, 3/ Enter password you previously gave\e[0m"
 
 sign:
-	echo "Signing the driver with the generated keys"
 	cp one.ko one.ko.bck
 	/usr/src/linux-headers-$(shell uname -r)/scripts/sign-file sha256 MOK.priv MOK.der one.ko
 

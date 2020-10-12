@@ -41,8 +41,10 @@ Prints:
 ### Util
 
 ```bash
-sudo mokutil --list-new
-sudo mokutil --reset
+sudo mokutil --list-new  # List key that will be added at boot
+sudo mokutil --reset  # Delete future keys
+sudo cat /proc/keys  # View your installed keys
+dmesg -wH  # Kernel log like tail -f
 ```
 
 
