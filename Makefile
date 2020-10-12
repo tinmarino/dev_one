@@ -6,7 +6,7 @@ obj-m := $(TARGET_MODULE).o
 # See: https://stackoverflow.com/questions/15910064/how-to-compile-a-linux-kernel-module-using-std-gnu99
 ccflags-y := -std=gnu99 -Wno-declaration-after-statement
 
-build: 
+build:
 	# run kernel build system to make module
 	$(MAKE) -C $(BUILDSYSTEM_DIR) M=$(PWD) modules
 

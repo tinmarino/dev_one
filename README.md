@@ -4,7 +4,7 @@
 
 When installed, running:
 ```bash
-cat /dev/one | hexdump -v 
+cat /dev/one | hexdump -v
 ```
 
 Prints:
@@ -15,12 +15,17 @@ Prints:
 
 ### Install
 
-1. `git clone https://github.com/tinmarino/dev_one DevOne && cd DevOne  # Download`
+1. `git clone https://github.com/tinmarino/dev_one.git DevOne && cd DevOne  # Download`
 2. `make build        # Compile`
 3. `make key          # Generate key for signing`
 4. `sudo make sign    # Sign driver module to permit MOK enforcement (security)`
 5. `sudo reboot now   # Reboot and enable Mok`
-  1.  
+    1. A blue screen (MOK manager) will appear
+    2. Choose "Enroll MOK"
+    3. Choose "Continue"
+    4. Choose "Yes" (when asked "Enroll the key")
+    5. Enter the password you gave at `make sign`
+    6. Choose "Reboot" (again)
 6. `sudo make load    # Load`
 7. `sudo make device  # Create /dev/one`
 8. `make test         # Test if all is ok`
@@ -34,8 +39,11 @@ Prints:
 
 
 ### Util
-  sudo mokutil --list-new
-  sudo mokutil --reset
+
+```bash
+sudo mokutil --list-new
+sudo mokutil --reset
+```
 
 
 ### Licence

@@ -90,12 +90,12 @@ static int my_init(void) {
     register_device();
     return 0;
 }
-    
+
 static void my_exit(void) {
     unregister_device();
     return;
 }
-    
+
 // Declare register and unregister command
 module_init(my_init);
 module_exit(my_exit);
