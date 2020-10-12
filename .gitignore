@@ -6,3 +6,8 @@
 *.mod.c
 *.o
 *.o.d
+
+# Keys
+*.bck
+*.priv
+*.der

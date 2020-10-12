@@ -1,13 +1,27 @@
 /*
 Brief: File Driver to create a devince /dev/one like the /dev/zero
-Source: Greatly copyed from: https://www.apriorit.com/dev-blog/195-simple-driver-for-linux-os
+Source:
+  Device Driver: https://www.apriorit.com/dev-blog/195-simple-driver-for-linux-os
+  Signing driver: https://gist.github.com/Garoe/74a0040f50ae7987885a0bebe5eda1aa
+  Mok: https://ubuntu.com/blog/how-to-sign-things-for-secure-boot
 Author: Created by Tinmarino 2020-10-12
 License: GPL => Open Source
 
-Build:
-  1/ make              # Compile
-  2/ sudo make load    # Load
+Install:
+  1/ make build        # Compile
+  2/ sudo make sign    # Sign driver module to permit MOK enforcement (security)
+  3/ sudo reboot now   # Reboot and enable Mok
+    3.1/ 
+  3/ sudo make load    # Load
   3/ sudo make device  # Create /dev/one
+  4/ make test         # Test if all is ok
+
+Play:
+  cat /dev/one | hexdump -v 
+
+Util:
+  sudo mokutil --list-new
+  sudo mokutil --reset
 */
 
 #include <linux/init.h>
@@ -49,7 +63,7 @@ static ssize_t device_file_read(
 static struct file_operations simple_driver_fops = {
     .owner   = THIS_MODULE,
     .read    = device_file_read,
-}
+};
 
 int register_device(void) {
     int result = 0;
