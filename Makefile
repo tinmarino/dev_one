@@ -33,7 +33,7 @@ load:
 unload:
 	rmmod ./$(TARGET_MODULE).ko
 
-create:
+device:
 	mknod /dev/one c $(shell cat /proc/devices | grep one$ | cut -d ' ' -f1) 0
 
 delete:
