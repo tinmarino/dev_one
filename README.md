@@ -27,7 +27,7 @@ Prints:
     5. Enter the password you gave at `make sign`
     6. Choose "Reboot" (again)
 6. `sudo make load    # Load`
-7. `sudo make device  # Create /dev/one`
+7. `sudo make create  # Create /dev/one`
 8. `make test         # Test if all is ok`
 
 
