@@ -12,7 +12,7 @@ obj-m := $(TARGET_MODULE).o
 ccflags-y := -std=gnu99 -Wno-declaration-after-statement
 
 define title
-	@echo -ne '\n\033[32m'
+	@echo -ne '\033[32m'
 	@echo -n $1
 	@echo -e '\033[0m'
 endef
@@ -26,11 +26,9 @@ all: \
 	create \
 	test
 
-
 clean: \
 	unbuild \
 	delete
-
 
 key:
 	@$(call title, "Creating keys")
@@ -43,7 +41,7 @@ key:
 	@echo "\e[31;1mPlease enter a password you will be asked for on reboot:\e[0m"
 	mokutil --import MOK.der
 	@echo "\e[31;1mNow you must: 1/ reboot, 2/ Select Unroll MOK, 3/ Enter password you previously gave\e[0m"
-
+	@echo
 
 check:
 	@$(call title, "Checking")
@@ -55,38 +53,44 @@ check:
 		echo '\e[0m'; \
 	  exit 1; \
 	fi
-
+	@echo
 
 build:
 	# Run kernel build system to make module
 	@$(call title, "Compiling")
 	$(MAKE) -C $(BUILDSYSTEM_DIR) M=$(PWD) modules
-
+	@echo
 
 unbuild:
-	# run kernel build system to cleanup in current directory
+	@$(call title, "Removing local binary")
 	$(MAKE) -C $(BUILDSYSTEM_DIR) M=$(PWD) clean
-	#rm -f MOK.priv MOK*.der
-
+	@echo
 
 sign:
 	@$(call title, "Signing with the generated self-signed keys")
-	cp one.ko one.ko.bck
-	/usr/src/linux-headers-$(shell uname -r)/scripts/sign-file sha256 MOK.priv MOK.der one.ko
-
+	cp $(TARGET_MODULE).ko $(TARGET_MODULE).ko.bck
+	/usr/src/linux-headers-$(shell uname -r)/scripts/sign-file sha256 MOK.priv MOK.der $(TARGET_MODULE).ko
+	@echo
 
 install:
 	@$(call title, "Installing system wide")
 	$(MAKE) -C $(BUILDSYSTEM_DIR) M=$(PWD) modules_install
+	@echo
 
 uninstall:
-	rm $(BUILDSYSTEM_DIR)/extra/one.ko
+	@$(call title, "Removing system binary")
+	rm $(BUILDSYSTEM_DIR)/extra/$(TARGET_MODULE).ko
+	@echo
 
 load:
-	modprobe one
+	@$(call title, "Loading")
+	modprobe $(TARGET_MODULE)
+	@echo
 
 unload:
-	modprobe -r one
+	@$(call title, "Unloading")
+	modprobe -r $(TARGET_MODULE)
+	@echo
 
 local_load:
 	insmod ./$(TARGET_MODULE).ko
@@ -94,14 +98,16 @@ local_load:
 local_unload:
 	rmmod ./$(TARGET_MODULE).ko
 
-
 create:
 	@$(call title, "Creating node device /dev/one")
-	mknod /dev/one c $(shell cat /proc/devices | grep one$ | cut -d ' ' -f1) 0
+	mknod /dev/$(TARGET_MODULE) c $(shell cat /proc/devices | grep $(TARGET_MODULE)$ | cut -d ' ' -f1) 0
+	@echo
 
 delete:
-	rm /dev/one
-
+	@$(call title, "Deleting node device /dev/$(TARGET_MODULE)")
+	if lsmod | grep -q '^$(TARGET_MODULE)\b'; then modprobe -r $(TARGET_MODULE); fi
+	if [ -e /dev/$(TARGET_MODULE) ]; then rm /dev/$(TARGET_MODULE); fi
+	@echo
 
 test:
 	@$(call title, "Testing")
@@ -112,3 +118,4 @@ test:
 		echo "\e[31mFAILED\e[0m"; \
 		exit 1; \
 	fi
+	@echo
