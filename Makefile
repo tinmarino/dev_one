@@ -1,6 +1,9 @@
 TARGET_MODULE:=one
 
-BUILDSYSTEM_DIR:=/lib/modules/$(shell uname -r)/build
+# Permit a user-defined kernel version with the KVER variable (#6)
+KVER ?= $(shell uname -r)
+BUILDSYSTEM_DIR ?= /lib/modules/$(KVER)/build
+
 PWD:=$(shell pwd)
 obj-m := $(TARGET_MODULE).o
 # See: https://stackoverflow.com/questions/15910064/how-to-compile-a-linux-kernel-module-using-std-gnu99
