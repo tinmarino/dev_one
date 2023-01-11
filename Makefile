@@ -18,7 +18,14 @@ define title
 	@echo -e '\033[0m'
 endef
 
-all: \
+# Only compile the module
+# -- Use: make full
+# -- Retrocompatibility)
+# See (#9 with the ARCH package already using makefile for a package)
+all: build
+
+
+full: \
 	check \
 	build \
 	sign \

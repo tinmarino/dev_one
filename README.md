@@ -32,7 +32,7 @@ sudo reboot now   # 3 Reboot and enable Mok
 Install module in system
 
 ```bash
-sudo make
+sudo make full
 ```
 
 In case you want a fast development life cycle, here is how to load module once
