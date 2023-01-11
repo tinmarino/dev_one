@@ -75,6 +75,7 @@ sign:
 install:
 	@$(call title, "Installing system wide")
 	$(MAKE) -C $(BUILDSYSTEM_DIR) M=$(PWD) modules_install
+	depmod
 	@echo
 
 uninstall:
