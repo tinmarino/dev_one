@@ -16,7 +16,6 @@ static ssize_t device_file_read(
         char __user *user_buffer,
         size_t count,
         loff_t *position) {
-    printk( KERN_NOTICE "One: Device file is read at offset = %i, read bytes count = %u\n" , (int)*position , (unsigned int)count );
 
     // Allocate Kernel buffer
     char* ptr = (char*) vmalloc(count);
