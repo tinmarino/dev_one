@@ -6,6 +6,7 @@ TARGET_MODULE := one
 KVER ?= $(shell uname -r)
 # -- like /lib/modules/5.15.0-57-generic/build/certs/signing_key.x509
 BUILDSYSTEM_DIR ?= /lib/modules/$(KVER)/build
+EXTRA_DIR ?= /lib/modules/$(KVER)/extra
 
 PWD := $(shell pwd)
 obj-m := $(TARGET_MODULE).o
@@ -23,11 +24,11 @@ all: \
 	sign \
 	install \
 	load \
-	create \
 	test
 
 clean: \
 	unbuild \
+	uninstall \
 	delete
 
 key:
@@ -80,7 +81,7 @@ install:
 
 uninstall:
 	@$(call title, "Removing system binary")
-	rm $(BUILDSYSTEM_DIR)/extra/$(TARGET_MODULE).ko
+	rm $(EXTRA_DIR)/$(TARGET_MODULE).ko
 	@echo
 
 load:
@@ -100,6 +101,7 @@ local_unload:
 	rmmod ./$(TARGET_MODULE).ko
 
 create:
+	# Not required since (#8 from Dreirund) as load is doing it
 	@$(call title, "Creating node device /dev/one")
 	mknod /dev/$(TARGET_MODULE) c $(shell cat /proc/devices | grep $(TARGET_MODULE)$ | cut -d ' ' -f1) 0
 	@echo
