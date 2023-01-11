@@ -54,6 +54,7 @@ As usual, to clean your work, run `sudo make clean`
 # Installed modules, see #7
 lsmod  # List modules
 sudo modprobe one  # Load one driver => creates /dev/one
+sudo depmod  # Re-create the module dependency list
 sudo modprobe -r one  # Load one driver => removes /dev/one
 
 # Keys
@@ -72,6 +73,5 @@ dmesg -wH  # Kernel log like tail -f
 
 ### Licence
 
-* Author: Tinmarino
-* Date: 2020-10-12
-* License: GPL => Open Source
+This project, DevOne, is licensed under the [GPL v2.0 or later](https://spdx.org/licenses/GPL-2.0-or-later.html)
+Copyright &copy; 2020-2022 Martin Tourneboeuf (https://tinmarino.github.io)
